@@ -1,4 +1,6 @@
-Welcome
+<% if user_signed_in? %>
+  Welcome: <%= current_user.email %>
+<% end %>
 
 <div id="posts">
   <%= render @posts %>
