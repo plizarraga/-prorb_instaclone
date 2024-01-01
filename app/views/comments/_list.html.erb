@@ -1,6 +1,25 @@
 <% post.comments.each do |comment| %>
   <div class="comment">
-    <span class="comment-author"><%= comment.user.username %></span>
-    <%= comment.body %>
+    <div>
+      <span class="comment-author"><%= comment.user.username %></span>
+      <%= comment.body %>
+    </div>
+    <% if user_signed_in? %>
+      <div class="comment-actions">
+          <% likeable_type = "Comment" %>
+          <% likeable_id = comment.id %>
+          <% if user_liked_resource?(current_user, comment) %>
+            <!-- Display content for users who liked the comment -->
+            <%= turbo_frame_tag "comment-likes" do %>
+              <%= button_to "", like_path(comment, likeable_type: likeable_type, likeable_id: likeable_id), class: "comment-actions-unlike", method: :delete %>
+            <% end %>
+          <% else %>
+            <!-- Display content for users who haven't liked the comment -->
+            <%= turbo_frame_tag "comment-likes" do %>
+              <%= button_to "", likes_path(likeable_type: likeable_type, likeable_id: likeable_id), class: "comment-actions-like" %>
+            <% end %>
+          <% end %>
+      </div>
+    <% end %>
   </div>
 <% end %>

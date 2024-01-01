@@ -9,21 +9,25 @@
   <div class="post-actions">
     <% likeable_type = "Post" %>
     <% likeable_id = post.id %>
-    <% if user_liked_post?(current_user, post) %>
-      <!-- Display content for users who liked the post -->
-      <%= turbo_frame_tag "post-likes" do %>
-        <%= button_to "", like_path(post, likeable_type: likeable_type, likeable_id: likeable_id), class: "post-actions-unlike", method: :delete %>
-      <% end %>
-    <% else %>
-      <!-- Display content for users who haven't liked the post -->
-      <%= turbo_frame_tag "post-likes" do %>
-        <%= button_to "", likes_path(likeable_type: likeable_type, likeable_id: likeable_id), class: "post-actions-like" %>
+    <% if user_signed_in? %>
+      <% if user_liked_resource?(current_user, post) %>
+        <!-- Display content for users who liked the post -->
+        <%= turbo_frame_tag "post-likes" do %>
+          <%= button_to "", like_path(post, likeable_type: likeable_type, likeable_id: likeable_id), class: "post-actions-unlike", method: :delete %>
+        <% end %>
+      <% else %>
+        <!-- Display content for users who haven't liked the post -->
+        <%= turbo_frame_tag "post-likes" do %>
+          <%= button_to "", likes_path(likeable_type: likeable_type, likeable_id: likeable_id), class: "post-actions-like" %>
+        <% end %>
       <% end %>
     <% end %>
     <div class="post-actions-comments" id="<%= dom_id(post, :comments_count) %>"><%= pluralize(post.comments.count, "comment") %></div>
   </div>
   <div class="post-comments">
-    <div id="<%= dom_id(post, :comment_form) %>"><%= render partial: "comments/form", locals: { post: post } %></div>
+    <% if user_signed_in? %>
+      <div id="<%= dom_id(post, :comment_form) %>"><%= render partial: "comments/form", locals: { post: post } %></div>
+    <% end %>
     <div id="<%= dom_id(post, :comments_list) %>">
       <%= render partial: "comments/list", locals: { post: post } %>
     </div>
